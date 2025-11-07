@@ -2,3 +2,4 @@ jsonlines
 rank_bm25
 jieba
 ollama
+tqdm

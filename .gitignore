@@ -1,4 +1,7 @@
-dragonball_dataset/
+# dragonball_dataset/
+predictions/
+result/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,9 +1,5 @@
-def chunk_documents(docs, chunk_size=1000, chunk_overlap=200):
-    """
-    根據 language 欄位分別對 zh/en 文件做 chunk，回傳 zh_chunks 和 en_chunks。
-    """
-    zh_chunks = []
-    en_chunks = []
+def chunk_documents(docs, language, chunk_size=1000, chunk_overlap=200):
+    chunks = []
     for doc_index, doc in enumerate(docs):
         if 'content' in doc and isinstance(doc['content'], str) and 'language' in doc:
             text = doc['content']
@@ -11,20 +7,17 @@ def chunk_documents(docs, chunk_size=1000, chunk_overlap=200):
             lang = doc['language']
             start_index = 0
             chunk_count = 0
-            while start_index < text_len:
-                end_index = min(start_index + chunk_size, text_len)
-                chunk_metadata = doc.copy()
-                chunk_metadata.pop('content', None)
-                chunk_metadata['chunk_index'] = chunk_count
-                chunk = {
-                    'page_content': text[start_index:end_index],
-                    'metadata': chunk_metadata
-                }
-                if lang == 'zh':
-                    zh_chunks.append(chunk)
-                elif lang == 'en':
-                    en_chunks.append(chunk)
-                # 其他語言不處理
-                start_index += chunk_size - chunk_overlap
-                chunk_count += 1
-    return zh_chunks, en_chunks
+            if lang == language:
+                while start_index < text_len:
+                    end_index = min(start_index + chunk_size, text_len)
+                    chunk_metadata = doc.copy()
+                    chunk_metadata.pop('content', None)
+                    chunk_metadata['chunk_index'] = chunk_count
+                    chunk = {
+                        'page_content': text[start_index:end_index],
+                        'metadata': chunk_metadata
+                    }
+                    chunks.append(chunk)
+                    start_index += chunk_size - chunk_overlap
+                    chunk_count += 1
+    return chunks

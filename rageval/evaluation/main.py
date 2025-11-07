@@ -34,10 +34,9 @@ def process_jsonl(input_file, output_file, evaluator_names, num_workers, use_ope
     output_path = Path(output_file)
 
     if output_path.exists():
-        with open(output_path, "r", encoding="utf-8") as f:
-            processed_ids = {json.loads(line)["query"]["query_id"] for line in f}
-    else:
-        processed_ids = set()
+        # delete existing file
+        output_path.unlink()
+    processed_ids = set()
 
     with open(input_path, "r", encoding="utf-8") as f_in:
         items = [json.loads(line) for line in f_in]
@@ -65,15 +64,11 @@ def main():
     parser.add_argument("--input_file", help="Path to the input JSONL file")
     parser.add_argument("--output_file", help="Path to the output JSONL file")
     parser.add_argument("--num_workers", type=int, default=4, help="Number of worker processes")
-    # parser.add_argument("--metrics", nargs='+', type=str, help="List of metrics to use")
-    # parser.add_argument("--use_openai", action="store_true", help="Use OpenAI API for evaluation")
-    parser.add_argument("--language", type=str, default="zh", help="Language for the metric")
-    # parser.add_argument('--model', type=str, default='gpt-4o-mini', help='GPT Model to use for evaluation')
-    parser.add_argument('--version', type=str, default='v1', help='Version of the evaluation, v1 stands for the short prompt version, v0 stands for the long prompt version')
+    parser.add_argument("--language", type=str, help="Language for the metric")
 
     args = parser.parse_args()
     evaluator_names = ["rouge-l", "precision", "recall", "eir", "keypoint_metrics"]
-    process_jsonl(args.input_file, args.output_file, evaluator_names, args.num_workers, True, args.language, "llama3.3:70b", args.version)
+    process_jsonl(args.input_file, args.output_file, evaluator_names, args.num_workers, True, args.language, "llama3.3:70b", "v1")
 
 if __name__ == "__main__":
     main()
