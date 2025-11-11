@@ -1,0 +1,20 @@
+name: Request RAG Evaluation
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Generator model"
+        required: true
+        default: "llama3.1"
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Evaluation
+        run: |
+          curl -X POST http://140.119.164.60:8080/evaluate \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer abc123token" \
+            -d '{"repo": "https://github.com/tenchanhe/1141WSM_Final.git"}'
