@@ -14,7 +14,4 @@ jobs:
     steps:
       - name: Trigger Evaluation
         run: |
-          curl -X POST http://140.119.164.60:8080/evaluate \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer abc123token" \
-            -d '{"repo": "https://github.com/tenchanhe/1141WSM_Final.git"}'
+          curl -H "ngrok-skip-browser-warning: true" https://d5d7ef804e70.ngrok-free.app/health
