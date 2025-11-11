@@ -1,4 +1,3 @@
-import json
 from ollama import Client
 
 def generate_answer(query, context_chunks):
