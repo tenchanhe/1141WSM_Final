@@ -14,6 +14,6 @@ jobs:
     steps:
        - name: Submit
          run: |
-             curl -X POST "https://towel.cs.nccu.edu.tw/wsm/submit/submit" \
+             curl -k -X POST "https://towel.cs.nccu.edu.tw/wsm/submit/submit" \
               -H "Content-Type: application/json" \
               -d "{\"repo\": \"${{ github.event.inputs.repo }}\"}"
