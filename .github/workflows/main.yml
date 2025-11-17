@@ -16,4 +16,4 @@ jobs:
          run: |
              curl -k -X POST "https://towel.cs.nccu.edu.tw/wsm/submit/submit" \
               -H "Content-Type: application/json" \
-              -d "{\"repo\": \"${{ github.event.inputs.repo }}\"}"
+              -d '{"repo\": "${{ github.event.inputs.repo }}"}'
