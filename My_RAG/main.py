@@ -20,7 +20,8 @@ def main(query_path, docs_path, language, output_path):
 
     # 3. Create Retriever
     print("Creating retriever...")
-    retriever = create_retriever(chunks, language)
+    # retriever = create_retriever("bm25", chunks, language)
+    retriever = create_retriever("embedding", chunks, language, embedding_model="embeddinggemma:300m")
     print("Retriever created successfully.")
 
 
@@ -28,12 +29,8 @@ def main(query_path, docs_path, language, output_path):
         # 4. Retrieve relevant chunks
         query_text = query['query']['content']
         query_language = query['language']
-        # print(f"\nRetrieving chunks for query: '{query_text}'")
         retrieved_chunks = retriever.retrieve(query_text)
-        # print(f"Retrieved {len(retrieved_chunks)} chunks.")
 
-        # 5. Generate Answer
-        # print("Generating answer...")
         answer = generate_answer(query_text, retrieved_chunks, query_language)
 
         query["prediction"]["content"] = answer

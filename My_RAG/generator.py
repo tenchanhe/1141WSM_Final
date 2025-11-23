@@ -1,7 +1,10 @@
 from ollama import Client
+import os
+ollama_url = "http://ollama-gateway:11434"
 
 def generate_answer(query, context_chunks, language):
     context = "\n\n".join([chunk['page_content'] for chunk in context_chunks])
+    client = Client(host=ollama_url)
 
     if language == "en":
         prompt = f"""You are an assistant for question-answering tasks. \
@@ -9,7 +12,6 @@ def generate_answer(query, context_chunks, language):
     If you don't know the answer, just say that you don't know. \
     Use three sentences maximum and keep the answer concise.\n\nQuestion: {query} \nContext: {context} \nAnswer:\n"""
         try:
-            client = Client(host="http://ollama-gateway:11434")
             response = client.generate(model="granite4:3b", prompt=prompt, stream=False)
             return response.get("response", "No response from model.")
         except Exception as e:
@@ -17,7 +19,6 @@ def generate_answer(query, context_chunks, language):
     else:
         prompt = f"""你是一个问答任务的助手。使用以下检索到的上下文片段来回答问题。如果你不知道答案，就说你不知道。请使用最多三句话，并保持回答简洁。\n\n问题: {query} \n上下文: {context} \n回答:\n"""
         try:
-            client = Client()
             response = client.generate(model="granite4:3b", prompt=prompt, stream=False)
             return response.get("response", "模型没有响应。")
         except Exception as e:
