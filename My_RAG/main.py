@@ -5,8 +5,8 @@ from retriever import create_retriever
 from generator import generate_answer
 import argparse
 
-# OLLAMA_URL="http://ollama-gateway:11434"
-OLLAMA_URL="http://localhost:11435"
+OLLAMA_URL="http://ollama-gateway:11434"
+# OLLAMA_URL="http://localhost:11435"
 
 def main(query_path, docs_path, language, output_path):
     print("Loading documents...")
