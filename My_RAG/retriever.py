@@ -12,7 +12,7 @@ class BM25Retriever:
             self.tokenized_corpus = [doc.split(" ") for doc in self.corpus]
         self.bm25 = BM25Okapi(self.tokenized_corpus)
 
-    def retrieve(self, query, top_k=5):
+    def retrieve(self, query, top_k=3):
         if self.language == "zh":
             tokenized_query = list(jieba.cut(query))
         else:

@@ -1,20 +1,14 @@
-name: Request RAG Evaluation
+name: auto-run run.sh
 
 on:
   workflow_dispatch:
-    inputs:
-      model:
-        description: "Generator model"
-        required: true
-        default: "llama3.1"
 
 jobs:
-  eval:
+  run-script:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Evaluation
-        run: |
-          curl -X POST https://candis-unpimpled-victoria.ngrok-free.dev/evaluate \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer abc123token" \
-            -d '{"repo": "https://github.com/tenchanhe/1141WSM_Final.git"}'
+       - name: Submit
+         run: |
+             curl -k -X POST "https://towel.cs.nccu.edu.tw/wsm/submit/submit" \
+              -H "Content-Type: application/json" \
+              -d '{"repo_url": "https://github.com/tenchanhe/1141WSM_Final.git"}'
