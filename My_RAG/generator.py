@@ -1,8 +1,7 @@
 from ollama import Client
 import os
-ollama_url = "http://ollama-gateway:11434"
 
-def generate_answer(query, context_chunks, language):
+def generate_answer(query, context_chunks, language, ollama_url="http://localhost:11435"):
     context = "\n\n".join([chunk['page_content'] for chunk in context_chunks])
     client = Client(host=ollama_url)
 

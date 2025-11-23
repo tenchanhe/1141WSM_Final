@@ -5,36 +5,34 @@ from retriever import create_retriever
 from generator import generate_answer
 import argparse
 
+# OLLAMA_URL="http://ollama-gateway:11434"
+OLLAMA_URL="http://localhost:11435"
+
 def main(query_path, docs_path, language, output_path):
-    # 1. Load Data
     print("Loading documents...")
     docs_for_chunking = load_jsonl(docs_path)
     queries = load_jsonl(query_path)
     print(f"Loaded {len(docs_for_chunking)} documents.")
     print(f"Loaded {len(queries)} queries.")
 
-    # 2. Chunk Documents
     print("Chunking documents...")
     chunks = chunk_documents(docs_for_chunking, language)
     print(f"Created {len(chunks)} chunks.")
 
-    # 3. Create Retriever
     print("Creating retriever...")
     # retriever = create_retriever("bm25", chunks, language)
-    retriever = create_retriever("embedding", chunks, language, embedding_model="embeddinggemma:300m")
+    retriever = create_retriever("embedding", chunks, language, embedding_model="embeddinggemma:300m", ollama_url=OLLAMA_URL)
     print("Retriever created successfully.")
 
 
     for query in tqdm(queries, desc="Processing Queries"):
-        # 4. Retrieve relevant chunks
         query_text = query['query']['content']
-        query_language = query['language']
+        query_language = language
         retrieved_chunks = retriever.retrieve(query_text)
 
-        answer = generate_answer(query_text, retrieved_chunks, query_language)
+        answer = generate_answer(query_text, retrieved_chunks, query_language, ollama_url=OLLAMA_URL)
 
         query["prediction"]["content"] = answer
-        # query["prediction"]["references"] = [retrieved_chunks[0]['page_content']]
         query["prediction"]["references"] = [chunk['page_content'] for chunk in retrieved_chunks]
 
     save_jsonl(output_path, queries)
