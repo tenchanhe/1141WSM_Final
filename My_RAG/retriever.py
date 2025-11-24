@@ -26,7 +26,7 @@ class BM25Retriever:
         return top_chunks
 
 class EmbeddingRetriever:
-    def __init__(self, chunks, language="en", embedding_model="embeddinggemma:300m", ollama_url="http://localhost:11435"):
+    def __init__(self, chunks, language="en", embedding_model="embeddinggemma:300m", ollama_url="http://ollama-gateway:11434"):
         self.chunks = chunks
         self.embedding_model = embedding_model
         self.language = language
@@ -47,7 +47,7 @@ class EmbeddingRetriever:
         top_chunks = [self.chunks[i] for i in top_indices]
         return top_chunks
 
-def create_retriever(retriever_type, chunks, language, embedding_model=None, ollama_url="http://localhost:11435"):
+def create_retriever(retriever_type, chunks, language, embedding_model=None, ollama_url="http://ollama-gateway:11434"):
     if retriever_type == "bm25":
         return BM25Retriever(chunks, language)
     elif retriever_type == "embedding":

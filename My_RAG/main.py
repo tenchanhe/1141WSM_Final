@@ -4,9 +4,16 @@ from chunker import chunk_documents
 from retriever import create_retriever
 from generator import generate_answer
 import argparse
+import os
+from dotenv import load_dotenv
 
-OLLAMA_URL="http://ollama-gateway:11434"
-# OLLAMA_URL="http://localhost:11435"
+if os.path.exists(".env"):
+    print("Loading environment variables from .env file")
+    load_dotenv(".env")
+    OLLAMA_URL = os.getenv("OLLAMA_URL")
+else:
+    OLLAMA_URL = "http://ollama-gateway:11434"
+print(f"Using OLLAMA_URL: {OLLAMA_URL}")
 
 def main(query_path, docs_path, language, output_path):
     print("Loading documents...")
@@ -21,7 +28,7 @@ def main(query_path, docs_path, language, output_path):
 
     print("Creating retriever...")
     # retriever = create_retriever("bm25", chunks, language)
-    retriever = create_retriever("embedding", chunks, language, embedding_model="embeddinggemma:300m", ollama_url=OLLAMA_URL)
+    retriever = create_retriever("embedding", chunks, language, embedding_model="qwen3-embedding:0.6b", ollama_url=OLLAMA_URL)
     print("Retriever created successfully.")
 
 
