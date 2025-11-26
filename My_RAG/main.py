@@ -35,7 +35,7 @@ def main(query_path, docs_path, language, output_path):
     for query in tqdm(queries, desc="Processing Queries"):
         query_text = query['query']['content']
         query_language = language
-        retrieved_chunks = retriever.retrieve(query_text)
+        retrieved_chunks = retriever.retrieve(query_text, top_k=2)
 
         answer = generate_answer(query_text, retrieved_chunks, query_language, ollama_url=OLLAMA_URL)
 

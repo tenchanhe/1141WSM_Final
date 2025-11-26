@@ -12,5 +12,5 @@ jobs:
              curl -k -X POST "https://towel.cs.nccu.edu.tw/wsm/submit/submit" \
               -H "Content-Type: application/json" \
               -d '{"repo_url": "https://github.com/tenchanhe/1141WSM_Final.git",
-                    "token": "17899F50-6AE9-4E98-986B-1F52FBACC563"
+                    "token": "${{ secrets.SUBMIT_TOKEN }}"
                 }'
