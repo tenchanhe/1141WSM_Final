@@ -39,19 +39,11 @@ def calculate_averages(data: List[Dict[str, Any]], metric_list: List[str]) -> Di
     if 'completeness' in averages and 'hallucination' in averages:
         completeness = averages['completeness']
         hallucination = averages['hallucination']
-        if completeness + hallucination > 0:
-            precision = completeness / (completeness + hallucination)
-            recall = completeness
-            if precision + recall > 0:
-                averages['keypoint_fscore'] = 2 * (precision * recall) / (precision + recall)
-            else:
-                averages['keypoint_fscore'] = 0.0
-        else:
-            averages['keypoint_fscore'] = 0.0
+        averages['factual_score'] = completeness - hallucination
 
     # Calculate generation total score
-    if 'keypoint_fscore' in averages and 'ROUGELScore' in averages:
-        averages['generation_total_score'] = (averages['keypoint_fscore'] + averages['ROUGELScore']) / 2
+    if 'factual_score' in averages and 'ROUGELScore' in averages:
+        averages['Generation_Total_Score'] = (0.5 * averages['factual_score'] + 0.5 * averages['ROUGELScore'])
     
     # Calculate average of F1 scores
     f1_scores = []
@@ -61,7 +53,7 @@ def calculate_averages(data: List[Dict[str, Any]], metric_list: List[str]) -> Di
         f1_scores.append(averages['Sentences_F1'])
         
     if f1_scores:
-        averages['Retrieval_F1_Avg'] = sum(f1_scores) / len(f1_scores)
+        averages['Retrieval_Total_Score'] = sum(f1_scores) / len(f1_scores)
 
     return averages
 
