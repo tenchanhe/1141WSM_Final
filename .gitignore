@@ -2,6 +2,8 @@
 predictions/
 result/
 test_codes/
+results_ex/
+predictions_ex/
 
 
 # Byte-compiled / optimized / DLL files

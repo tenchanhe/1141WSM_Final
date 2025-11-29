@@ -15,8 +15,55 @@ def calculate_averages(data: List[Dict[str, Any]], metric_list: List[str]) -> Di
             if metric in item:
                 metric_sums[metric] += item[metric]
                 metric_counts[metric] += 1
-    #only return the average of the metrics that the metric_counts is not 0
-    return {metric: metric_sums[metric] / metric_counts[metric] for metric in metric_list if metric_counts[metric] != 0}
+    
+    averages = {metric: metric_sums[metric] / metric_counts[metric] for metric in metric_list if metric_counts[metric] != 0}
+    print(averages)
+
+    # Calculate F1 scores
+    if 'Words_Precision' in averages and 'Words_Recall' in averages:
+        precision = averages['Words_Precision']
+        recall = averages['Words_Recall']
+        if precision + recall > 0:
+            averages['Words_F1'] = 2 * (precision * recall) / (precision + recall)
+        else:
+            averages['Words_F1'] = 0.0
+
+    if 'Sentences_Precision' in averages and 'Sentences_Recall' in averages:
+        precision = averages['Sentences_Precision']
+        recall = averages['Sentences_Recall']
+        if precision + recall > 0:
+            averages['Sentences_F1'] = 2 * (precision * recall) / (precision + recall)
+        else:
+            averages['Sentences_F1'] = 0.0
+            
+    if 'completeness' in averages and 'hallucination' in averages:
+        completeness = averages['completeness']
+        hallucination = averages['hallucination']
+        if completeness + hallucination > 0:
+            precision = completeness / (completeness + hallucination)
+            recall = completeness
+            if precision + recall > 0:
+                averages['keypoint_fscore'] = 2 * (precision * recall) / (precision + recall)
+            else:
+                averages['keypoint_fscore'] = 0.0
+        else:
+            averages['keypoint_fscore'] = 0.0
+
+    # Calculate generation total score
+    if 'keypoint_fscore' in averages and 'ROUGELScore' in averages:
+        averages['generation_total_score'] = (averages['keypoint_fscore'] + averages['ROUGELScore']) / 2
+    
+    # Calculate average of F1 scores
+    f1_scores = []
+    if 'Words_F1' in averages:
+        f1_scores.append(averages['Words_F1'])
+    if 'Sentences_F1' in averages:
+        f1_scores.append(averages['Sentences_F1'])
+        
+    if f1_scores:
+        averages['Retrieval_F1_Avg'] = sum(f1_scores) / len(f1_scores)
+
+    return averages
 
 
 def process_folder(folder_path: str, output_file: str, metric_list: List[str]):
@@ -35,7 +82,7 @@ def process_folder(folder_path: str, output_file: str, metric_list: List[str]):
 if __name__ == "__main__":
     folder_path = './result'
     output_file = './result/final_result.json'
-    metric_list = ['EIR', 'Precision', 'Recall', 'ROUGELScore', "completeness", "hallucination", "irrelevance"]
+    metric_list = ['Sentences_Precision', 'Sentences_Recall', "Words_Precision", "Words_Recall", 'ROUGELScore', "completeness", "hallucination", "irrelevance"]
     
     process_folder(folder_path, output_file, metric_list)
     print(f"Results saved to {output_file}")

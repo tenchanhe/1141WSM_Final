@@ -67,8 +67,8 @@ def main():
     parser.add_argument("--language", type=str, help="Language for the metric")
 
     args = parser.parse_args()
-    # evaluator_names = ["rouge-l", "precision", "recall", "eir", "keypoint_metrics"]
-    evaluator_names = ["rouge-l", "precision", "recall", "eir"]
+    evaluator_names = ["rouge-l", "words_precision", "words_recall", "sentences_precision", "sentences_recall", "keypoint_metrics"]
+    # evaluator_names = ["rouge-l", "words_precision", "words_recall", "sentences_precision", "sentences_recall"]
     process_jsonl(args.input_file, args.output_file, evaluator_names, args.num_workers, True, args.language, "gpt-oss:20b", "v1")
 
 if __name__ == "__main__":
