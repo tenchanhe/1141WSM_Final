@@ -46,8 +46,8 @@ if __name__ == "__main__":
     parser.add_argument('--output', help='Path to the output file')
 
     parser.add_argument('--retriever', help='Retriever type: bm25 or embedding', default='bm25')
-    parser.add_argument('--chunk_size', help='Chunk size for document chunking', default=1024)
-    parser.add_argument('--topk', help='Number of top chunks to retrieve', default=5)
+    parser.add_argument('--chunk_size', help='Chunk size for document chunking', default=512)
+    parser.add_argument('--topk', help='Number of top chunks to retrieve', default=3)
     parser.add_argument('--embedding_model', help='Embedding model to use for embedding retriever', default='qwen3-embedding:0.6b')
     args = parser.parse_args()
     main(args)
