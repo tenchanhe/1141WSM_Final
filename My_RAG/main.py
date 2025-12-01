@@ -17,12 +17,14 @@ print(f"Using OLLAMA_URL: {OLLAMA_URL}")
 
 def main(args):
     print("Arguments:", args.language, args.retriever, args.chunk_size, args.topk, args.embedding_model)
-    docs_for_chunking = load_jsonl(args.docs_path)
     queries = load_jsonl(args.query_path)
 
-    chunks = chunk_documents(docs_for_chunking, args.language, chunk_size=int(args.chunk_size))
-
-    retriever = create_retriever(args.retriever, chunks, args.language, embedding_model=args.embedding_model, ollama_url=OLLAMA_URL)
+    if args.retriever == 'pyserini':
+        retriever = create_retriever(args.retriever, language=args.language, index_path=args.index_path)
+    else:
+        docs_for_chunking = load_jsonl(args.docs_path)
+        chunks = chunk_documents(docs_for_chunking, args.language, chunk_size=int(args.chunk_size))
+        retriever = create_retriever(args.retriever, chunks, args.language, embedding_model=args.embedding_model, ollama_url=OLLAMA_URL)
 
 
     for query in tqdm(queries, desc="Processing Queries"):
@@ -45,9 +47,10 @@ if __name__ == "__main__":
     parser.add_argument('--language', help='Language to filter queries (zh or en), if not specified, process all')
     parser.add_argument('--output', help='Path to the output file')
 
-    parser.add_argument('--retriever', help='Retriever type: bm25 or embedding', default='bm25')
+    parser.add_argument('--retriever', help='Retriever type: bm25, embedding, or pyserini', default='pyserini')
     parser.add_argument('--chunk_size', help='Chunk size for document chunking', default=512)
     parser.add_argument('--topk', help='Number of top chunks to retrieve', default=3)
     parser.add_argument('--embedding_model', help='Embedding model to use for embedding retriever', default='qwen3-embedding:0.6b')
+    parser.add_argument('--index_path', help='Path to the pyserini index', default='indexes/')
     args = parser.parse_args()
     main(args)

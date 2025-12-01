@@ -4,6 +4,8 @@ from ollama import Client
 # import ollama
 import numpy as np
 import os
+import json
+from pyserini.search.lucene import LuceneSearcher
 
 
 class BM25Retriever:
@@ -47,10 +49,40 @@ class EmbeddingRetriever:
         top_chunks = [self.chunks[i] for i in top_indices]
         return top_chunks
 
-def create_retriever(retriever_type, chunks, language, embedding_model=None, ollama_url="http://ollama-gateway:11434"):
+class PyseriniRetriever:
+    def __init__(self, index_path, language='en'):
+        self.index_path = index_path
+        self.language = language
+        try:
+            self.searcher = LuceneSearcher(self.index_path)
+            self.searcher.set_bm25(k1=2, b=0.75)
+        except Exception as e:
+            print(f"Error initializing LuceneSearcher: {e}")
+            print("Please make sure you have built the index using 'build_index.sh'")
+            raise
+
+    def retrieve(self, query, top_k=3):
+        if self.language == 'zh':
+            query = " ".join(jieba.cut(query))
+        
+        hits = self.searcher.search(query, k=top_k)
+        
+        results = []
+        for hit in hits:
+            raw_doc = self.searcher.doc(hit.docid).raw()
+            doc_data = json.loads(raw_doc)
+            results.append({'page_content': doc_data['contents']})
+        
+        return results
+
+
+
+def create_retriever(retriever_type, chunks=None, language='en', embedding_model=None, ollama_url="http://ollama-gateway:11434", index_path=None):
     if retriever_type == "bm25":
         return BM25Retriever(chunks, language)
     elif retriever_type == "embedding":
         return EmbeddingRetriever(chunks, language, embedding_model, ollama_url)
+    elif retriever_type == "pyserini":
+        return PyseriniRetriever(index_path, language)
     else:
         raise ValueError(f"Unknown retriever type: {retriever_type}")

@@ -4,3 +4,5 @@ jieba
 ollama
 tqdm
 dotenv
+pyserini
+faiss-cpu
